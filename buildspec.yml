@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Installing dependencies..."
+      - pip3 install --target ./package requests-aws4auth opensearch-py -t lib
+  build:
+    commands:
+      - echo "Zipping deployment package..."
+      - cd lib
+      - zip -r9 ../deployment_package1.zip .
+      - zip -r9 ../deployment_package2.zip .
+      - cd ..
+      - mv index-photos.py lambda_function.py
+      - zip -g deployment_package1.zip lambda_function.py
+      - mv lambda_function.py index-photos.py
+      - mv search-photos.py lambda_function.py
+      - zip -g deployment_package2.zip lambda_function.py
+      - mv lambda_function.py search-photos.py
+  post_build:
+    commands:
+      - echo "Updating lambda Function..."
+      - aws lambda update-function-code --function-name index-photos --zip-file fileb://deployment_package1.zip
+      - aws lambda update-function-code --function-name search-photos --zip-file fileb://deployment_package2.zip
+      - echo "DONE!!"
