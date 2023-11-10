@@ -73,7 +73,7 @@ def lambda_handler(event, context):
         print("opensource request: ", os_res)
         
     except Exception as e:
-        print("Error: "+ str(e))
+        print("Errorssssssssss: "+ str(e))
     
     
     return {
